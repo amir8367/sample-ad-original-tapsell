@@ -148,146 +148,140 @@ class InputPage extends StatefulWidget { final String rewardedZoneId; InputPage(
 
 @override _InputPageState createState() => _InputPageState(); }
 
-class _InputPageState extends State<InputPage> with SingleTickerProviderStateMixin { final TextEditingController _controller = TextEditingController(); bool _processing = false;
+class _InputPageState extends State<InputPage> with SingleTickerProviderStateMixin {
+  final TextEditingController _controller = TextEditingController();
+  bool _processing = false;
 
-Future<bool> hasInternet() async { final connectivityResult = await Connectivity().checkConnectivity(); if (connectivityResult == ConnectivityResult.none) return false; try { final result = await InternetAddress.lookup('example.com').timeout(Duration(seconds: 5)); return result.isNotEmpty && result[0].rawAddress.isNotEmpty; } catch () { return false; } }
+  // ✅ نام متد اصلاح شد: _hasInternet
+  Future<bool> _hasInternet() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) return false;
+    try {
+      final result = await InternetAddress.lookup('example.com').timeout(Duration(seconds: 5));
+      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+    } catch (_) {
+      return false;
+    }
+  }
 
-Future<bool> _showRewardedAd() async { final zone = widget.rewardedZoneId; if (zone == 'YOUR_REWARDED_ZONE_ID') return false; final completer = Completer<bool>();
+  Future<bool> _showRewardedAd() async {
+    final zone = widget.rewardedZoneId;
+    if (zone == 'YOUR_REWARDED_ZONE_ID') return false;
 
-try {
-  TapsellPlus.instance.showRewardedVideo(
-    zoneId: zone,
-    onRewarded: (reward) {
-      if (!completer.isCompleted) completer.complete(true);
-    },
-    onError: (err) {
+    final completer = Completer<bool>();
+    try {
+      TapsellPlus.instance.showRewardedVideo(
+        zoneId: zone,
+        onRewarded: (reward) {
+          if (!completer.isCompleted) completer.complete(true);
+        },
+        onError: (err) {
+          if (!completer.isCompleted) completer.complete(false);
+        },
+        onNoAdAvailable: () {
+          if (!completer.isCompleted) completer.complete(false);
+        },
+      );
+
+      Future.delayed(Duration(seconds: 15), () {
+        if (!completer.isCompleted) completer.complete(false);
+      });
+
+      return await completer.future;
+    } catch (e) {
+      print('rewarded show error: $e');
       if (!completer.isCompleted) completer.complete(false);
-    },
-    onNoAdAvailable: () {
-      if (!completer.isCompleted) completer.complete(false);
-    },
-  );
+      return await completer.future;
+    }
+  }
 
-  Future.delayed(Duration(seconds: 15), () {
-    if (!completer.isCompleted) completer.complete(false);
-  });
+  void _onNextPressed() async {
+    final text = _controller.text.trim();
+    if (text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('لطفاً یک جمله وارد کنید')));
+      return;
+    }
 
-  return await completer.future;
-} catch (e) {
-  print('rewarded show error: \$e');
-  if (!completer.isCompleted) completer.complete(false);
-  return await completer.future;
-}
+    setState(() => _processing = true);
 
-}
+    final okInternet = await _hasInternet();
+    if (!okInternet) {
+      setState(() => _processing = false);
+      await showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text('نیاز به اینترنت'),
+          content: Text('برای نمایش تبلیغ نیاز به اینترنت است.'),
+          actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('باشه'))],
+        ),
+      );
+      return;
+    }
 
-void _onNextPressed() async { final text = _controller.text.trim(); if (text.isEmpty) { ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('لطفاً یک جمله وارد کنید'))); return; }
+    // لودر
+    showDialog(context: context, barrierDismissible: false, builder: (_) => Center(child: CircularProgressIndicator()));
 
-setState(() => _processing = true);
+    final adOk = await _showRewardedAd();
 
-final okInternet = await _hasInternet();
-if (!okInternet) {
-  setState(() => _processing = false);
-  await showDialog(
-    context: context,
-    builder: (_) => AlertDialog(
-      title: Text('نیاز به اینترنت'),
-      content: Text('برای نمایش تبلیغ نیاز به اینترنت است.'),
-      actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('باشه'))],
-    ),
-  );
-  return;
-}
+    Navigator.of(context).pop(); // بستن لودر
 
-// لودر
-showDialog(context: context, barrierDismissible: false, builder: (_) => Center(child: CircularProgressIndicator()));
+    setState(() => _processing = false);
 
-final adOk = await _showRewardedAd();
+    if (!adOk) {
+      await showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: Text('تبلیغ موجود نیست'),
+          content: Text('تبلیغ جایزه‌دار در دسترس نیست، لطفاً بعداً تلاش کنید.'),
+          actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('باشه'))],
+        ),
+      );
+      return;
+    }
 
-Navigator.of(context).pop(); // بستن لودر
+    // تصمیم شانسی
+    final isCorrect = Random().nextBool();
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => ResultPage(isCorrect: isCorrect)));
+  }
 
-setState(() => _processing = false);
-
-if (!adOk) {
-  await showDialog(
-    context: context,
-    builder: (_) => AlertDialog(
-      title: Text('تبلیغ موجود نیست'),
-      content: Text('تبلیغ جایزه‌دار در دسترس نیست، لطفاً بعداً تلاش کنید.'),
-      actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('باشه'))],
-    ),
-  );
-  return;
-}
-
-// تصمیم شانسی
-final isCorrect = Random().nextBool();
-Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => ResultPage(isCorrect: isCorrect)));
-
-}
-
-@override Widget build(BuildContext context) { return Scaffold( appBar: AppBar(title: Text('جمله را وارد کنید')), body: Padding( padding: const EdgeInsets.all(18.0), child: Column( children: [ TextField( controller: _controller, minLines: 1, maxLines: 4, decoration: InputDecoration( hintText: 'مثال: دیروز به مدرسه نرفتم', filled: true, fillColor: Colors.white, border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)), contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14), enabled: !_processing, ), ), SizedBox(height: 18), ElevatedButton( onPressed: _processing ? null : _onNextPressed, style: ElevatedButton.styleFrom( backgroundColor: Colors.deepPurple, elevation: 8, shadowColor: Colors.black45, padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), ), child: Text('بعدی', style: TextStyle(fontSize: 18)), ), ], ), ), ); } }
-
-class ResultPage extends StatefulWidget { final bool isCorrect; ResultPage({required this.isCorrect});
-
-@override _ResultPageState createState() => _ResultPageState(); }
-
-class _ResultPageState extends State<ResultPage> with SingleTickerProviderStateMixin { late AnimationController _ctrl;
-
-@override void initState() { super.initState(); _ctrl = AnimationController(vsync: this, duration: Duration(milliseconds: 800)); _ctrl.forward(); }
-
-@override void dispose() { _ctrl.dispose(); super.dispose(); }
-
-@override Widget build(BuildContext context) { final bgColor = widget.isCorrect ? Colors.green.shade600 : Colors.red.shade600; final text = widget.isCorrect ? 'درست' : 'غلط';
-
-return Scaffold(
-  backgroundColor: bgColor,
-  body: SafeArea(
-    child: Center(
-      child: ScaleTransition(
-        scale: CurvedAnimation(parent: _ctrl, curve: Curves.elasticOut),
-        child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 40),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.06),
-            borderRadius: BorderRadius.circular(18),
-            boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 12, offset: Offset(0, 8))],
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                text,
-                style: TextStyle(
-                  fontSize: 72,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  shadows: [Shadow(blurRadius: 12, color: Colors.black45, offset: Offset(0, 6))],
-                ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('جمله را وارد کنید')),
+      body: Padding(
+        padding: const EdgeInsets.all(18.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _controller,
+              minLines: 1,
+              maxLines: 4,
+              decoration: InputDecoration(
+                hintText: 'مثال: دیروز به مدرسه نرفتم',
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                enabled: !_processing,
               ),
-              SizedBox(height: 16),
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (_) => StartPage()), (route) => false),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: bgColor,
-                  elevation: 8,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 10),
-                  child: Text('بازگشت به شروع', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                ),
-              )
-            ],
-          ),
+            ),
+            SizedBox(height: 18),
+            ElevatedButton(
+              onPressed: _processing ? null : _onNextPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.deepPurple,
+                elevation: 8,
+                shadowColor: Colors.black45,
+                padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: Text('بعدی', style: TextStyle(fontSize: 18)),
+            ),
+          ],
         ),
       ),
-    ),
-  ),
-);
-
-} }
+    );
+  }
+}
 
 
