@@ -1,8 +1,12 @@
+// lie_detector_flutter_main.dart // اپلیکیشن "دروغ‌سنج" — یک فایل کامل Flutter // توضیحات کوتاه: // - جایگزین کنید: TAPSELL_KEY، BANNER_ZONE_ID، REWARDED_ZONE_ID // - dependencies مورد نیاز در pubspec.yaml: //   tapsell_plus: ^1.0.0 //   connectivity_plus: ^4.0.0 // - این کد برای اندروید/آی‌او‌اس نوشته شده (از dart:io برای بررسی اینترنت استفاده می‌شود)
+
 import 'dart:async'; import 'dart:io'; import 'dart:math';
 
 import 'package:flutter/material.dart'; import 'package:connectivity_plus/connectivity_plus.dart'; import 'package:tapsell_plus/tapsell_plus.dart';
 
-void main() async { WidgetsFlutterBinding.ensureInitialized(); 
+void main() async { WidgetsFlutterBinding.ensureInitialized();
+
+// ======= جای TAPSELL_KEY رو اینجا بذار ======= const String TAPSELL_KEY = 'nidhnjdiqidktemidibsjiebfocrhbgktjmccsqktscmittkobkbooqnjlrnnhhtheccgn'; // ============================================
 
 await TapsellPlus.instance.initialize(TAPSELL_KEY); runApp(LieDetectorApp()); }
 
@@ -284,4 +288,5 @@ return Scaffold(
 );
 
 } }
+
 
