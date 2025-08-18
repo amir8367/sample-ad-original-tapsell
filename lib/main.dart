@@ -144,7 +144,7 @@ void showNoInternetDialog() { showDialog( context: context, barrierDismissible: 
 
 } }
 
-// ----------------- Input Page ----------------- class InputPage extends StatefulWidget { final String rewardedZoneId; InputPage({required this.rewardedZoneId});
+class InputPage extends StatefulWidget { final String rewardedZoneId; InputPage({required this.rewardedZoneId});
 
 @override _InputPageState createState() => _InputPageState(); }
 
@@ -228,7 +228,7 @@ Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) => ResultPa
 
 @override Widget build(BuildContext context) { return Scaffold( appBar: AppBar(title: Text('جمله را وارد کنید')), body: Padding( padding: const EdgeInsets.all(18.0), child: Column( children: [ TextField( controller: _controller, minLines: 1, maxLines: 4, decoration: InputDecoration( hintText: 'مثال: دیروز به مدرسه نرفتم', filled: true, fillColor: Colors.white, border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)), contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14), enabled: !_processing, ), ), SizedBox(height: 18), ElevatedButton( onPressed: _processing ? null : _onNextPressed, style: ElevatedButton.styleFrom( backgroundColor: Colors.deepPurple, elevation: 8, shadowColor: Colors.black45, padding: EdgeInsets.symmetric(horizontal: 28, vertical: 14), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)), ), child: Text('بعدی', style: TextStyle(fontSize: 18)), ), ], ), ), ); } }
 
-// ----------------- Result Page ----------------- class ResultPage extends StatefulWidget { final bool isCorrect; ResultPage({required this.isCorrect});
+class ResultPage extends StatefulWidget { final bool isCorrect; ResultPage({required this.isCorrect});
 
 @override _ResultPageState createState() => _ResultPageState(); }
 
