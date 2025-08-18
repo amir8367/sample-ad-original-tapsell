@@ -15,7 +15,7 @@ class LieDetectorApp extends StatelessWidget { @override Widget build(BuildConte
 class StartPage extends StatefulWidget { @override _StartPageState createState() => _StartPageState(); }
 
 class _StartPageState extends State<StartPage> with SingleTickerProviderStateMixin { 
-final String bannerZoneId = 'YOUR_BANNER_ZONE_ID'; final String rewardedZoneId = 'YOUR_REWARDED_ZONE_ID'; // ==============================================
+final String bannerZoneId = '68a21cc3e6b8427db138ac02'; final String rewardedZoneId = '68a21c01e6b8427db138ac01'; // ==============================================
 
 late AnimationController _pulseController; bool _connected = false; bool _bannerRequested = false; Timer? _retryTimer;
 
