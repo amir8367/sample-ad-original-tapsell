@@ -83,7 +83,7 @@ try {
 
 }
 
-void _onStartPressed() async { // چک اینترنت مجدد final ok = await _hasInternet(); if (!ok) { _showNoInternetDialog(); return; }
+void _onStartPressed() async { final ok = await _hasInternet(); if (!ok) { _showNoInternetDialog(); return; }
 
 // نمایش صفحه لودینگ کوچک
 showDialog(
