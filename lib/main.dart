@@ -50,7 +50,7 @@ try {
 
 }
 
-Future<bool> _showRewardedAd() async { // اگر zone id جایگزین نشده باشه، بگیم تبلیغ در دسترس نیست if (rewardedZoneId == 'YOUR_REWARDED_ZONE_ID') return false;
+Future<bool> _showRewardedAd() async { if (rewardedZoneId == 'YOUR_REWARDED_ZONE_ID') return false;
 
 final completer = Completer<bool>();
 
