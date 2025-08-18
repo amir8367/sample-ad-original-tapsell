@@ -50,7 +50,7 @@ try {
 
 }
 
-Future<bool> _showRewardedAd() async { if (rewardedZoneId == 'YOUR_REWARDED_ZONE_ID') return false;
+Future<bool> _showRewardedAd() async { if (rewardedZoneId == '68a21c01e6b8427db138ac01') return false;
 
 final completer = Completer<bool>();
 
