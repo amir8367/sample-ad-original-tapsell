@@ -29,7 +29,7 @@ _checkInternetAndInit();
 
 Future<void> _checkInternetAndInit() async { final ok = await _hasInternet(); setState(() => _connected = ok); if (ok) { _loadBannerIfNeeded(); } }
 
-Future<bool> hasInternet() async { final connectivityResult = await Connectivity().checkConnectivity(); if (connectivityResult == ConnectivityResult.none) return false; try { final result = await InternetAddress.lookup('example.com').timeout(Duration(seconds: 5)); return result.isNotEmpty && result[0].rawAddress.isNotEmpty; } catch () { return false; } }
+Future<bool> _hasInternet() async { final connectivityResult = await Connectivity().checkConnectivity(); if (connectivityResult == ConnectivityResult.none) return false; try { final result = await InternetAddress.lookup('example.com').timeout(Duration(seconds: 5)); return result.isNotEmpty && result[0].rawAddress.isNotEmpty; } catch () { return false; } }
 
 void _loadBannerIfNeeded() { if (_bannerRequested) return; if (bannerZoneId == '68a21cc3e6b8427db138ac02') {  setState(() => _bannerRequested = true); return; }
 
