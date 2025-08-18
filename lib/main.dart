@@ -6,7 +6,7 @@ import 'package:flutter/material.dart'; import 'package:connectivity_plus/connec
 
 void main() async { WidgetsFlutterBinding.ensureInitialized();
 
-// ======= جای TAPSELL_KEY رو اینجا بذار ======= const String TAPSELL_KEY = 'nidhnjdiqidktemidibsjiebfocrhbgktjmccsqktscmittkobkbooqnjlrnnhhtheccgn'; // ============================================
+const String TAPSELL_KEY = 'nidhnjdiqidktemidibsjiebfocrhbgktjmccsqktscmittkobkbooqnjlrnnhhtheccgn';
 
 await TapsellPlus.instance.initialize(TAPSELL_KEY); runApp(LieDetectorApp()); }
 
