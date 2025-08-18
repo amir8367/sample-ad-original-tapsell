@@ -209,7 +209,7 @@ class _InputPageState extends State<InputPage> with SingleTickerProviderStateMix
       setState(() => _processing = false);
       await showDialog(
         context: context,
-        builder: (_) => AlertDialog(
+        builder: (BuildContext context) => AlertDialog(
           title: Text('نیاز به اینترنت'),
           content: Text('برای نمایش تبلیغ نیاز به اینترنت است.'),
           actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('باشه'))],
