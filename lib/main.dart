@@ -12,7 +12,7 @@ await TapsellPlus.instance.initialize(TAPSELL_KEY); runApp(LieDetectorApp()); }
 
 class LieDetectorApp extends StatelessWidget { @override Widget build(BuildContext context) { return MaterialApp( debugShowCheckedModeBanner: false, title: 'دروغ‌سنج', theme: ThemeData( primarySwatch: Colors.red, fontFamily: 'IRANSans', ), home: StartPage(), ); } }
 
-// ----------------- Start Page ----------------- class StartPage extends StatefulWidget { @override _StartPageState createState() => _StartPageState(); }
+class StartPage extends StatefulWidget { @override _StartPageState createState() => _StartPageState(); }
 
 class _StartPageState extends State<StartPage> with SingleTickerProviderStateMixin { // ======= جایگزین کن با zone id های تپسل ====== final String bannerZoneId = 'YOUR_BANNER_ZONE_ID'; final String rewardedZoneId = 'YOUR_REWARDED_ZONE_ID'; // ==============================================
 
