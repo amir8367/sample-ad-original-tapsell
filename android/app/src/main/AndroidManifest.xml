@@ -2,7 +2,7 @@
     package="ir.tapsell.plus.tapsell_plus_example">
    <application
 
-        android:label="tapsell_plus_example"
+        android:label="lie detector | دروغ سنج"
         android:icon="@mipmap/ic_launcher">
 
        <meta-data
