@@ -31,7 +31,7 @@ Future<void> _checkInternetAndInit() async { final ok = await _hasInternet(); se
 
 Future<bool> hasInternet() async { final connectivityResult = await Connectivity().checkConnectivity(); if (connectivityResult == ConnectivityResult.none) return false; try { final result = await InternetAddress.lookup('example.com').timeout(Duration(seconds: 5)); return result.isNotEmpty && result[0].rawAddress.isNotEmpty; } catch () { return false; } }
 
-void _loadBannerIfNeeded() { if (_bannerRequested) return; if (bannerZoneId == 'YOUR_BANNER_ZONE_ID') { // placeholder — کاربر zone id را باید جایگزین کند. setState(() => _bannerRequested = true); return; }
+void _loadBannerIfNeeded() { if (_bannerRequested) return; if (bannerZoneId == '68a21cc3e6b8427db138ac02') {  setState(() => _bannerRequested = true); return; }
 
 try {
   TapsellPlus.instance.showBannerAd(
