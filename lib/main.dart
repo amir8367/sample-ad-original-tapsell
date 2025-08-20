@@ -64,13 +64,6 @@ class _StartPageState extends State<StartPage> {
 
   @override
   Widget build(BuildContext context) {
-    Widget banner = TapsellPlus.instance.showStandardBannerAd(
-      context,
-      "68a21cc3e6b8427db138ac02",
-      TapsellPlusBannerType.BANNER_320x50,
-      onError: (message) => debugPrint("Banner error: $message"),
-    );
-
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -106,7 +99,10 @@ class _StartPageState extends State<StartPage> {
             ),
           ),
           const Spacer(),
-          banner,
+          const TapsellPlusBanner(
+            zoneId: "68a21cc3e6b8427db138ac02",
+            bannerType: TapsellPlusBannerType.BANNER_320x50,
+          ),
         ],
       ),
     );
@@ -127,13 +123,6 @@ class CheckPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget banner = TapsellPlus.instance.showStandardBannerAd(
-      context,
-      "68a21cc3e6b8427db138ac02",
-      TapsellPlusBannerType.BANNER_320x50,
-      onError: (message) => debugPrint("Banner error: $message"),
-    );
-
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -166,7 +155,10 @@ class CheckPage extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          banner,
+          const TapsellPlusBanner(
+            zoneId: "68a21cc3e6b8427db138ac02",
+            bannerType: TapsellPlusBannerType.BANNER_320x50,
+          ),
         ],
       ),
     );
@@ -180,13 +172,6 @@ class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget banner = TapsellPlus.instance.showStandardBannerAd(
-      context,
-      "68a21cc3e6b8427db138ac02",
-      TapsellPlusBannerType.BANNER_320x50,
-      onError: (message) => debugPrint("Banner error: $message"),
-    );
-
     return Scaffold(
       body: Container(
         color: isTrue ? Colors.lime : Colors.red,
@@ -208,7 +193,10 @@ class ResultPage extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: banner,
+      bottomNavigationBar: const TapsellPlusBanner(
+        zoneId: "68a21cc3e6b8427db138ac02",
+        bannerType: TapsellPlusBannerType.BANNER_320x50,
+      ),
     );
   }
 }
