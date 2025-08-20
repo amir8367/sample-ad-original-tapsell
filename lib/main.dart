@@ -2,7 +2,14 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:tapsell_plus/tapsell_plus.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // مقداردهی اولیه تپسل
+  await TapsellPlus.instance.initialize(
+    "nidhnjdiqidktemidibsjiebfocrhbgktjmccsqktscmittkobkbooqnjlrnnhhtheccgn", // AppKey
+  );
+
   runApp(const LieDetectorApp());
 }
 
@@ -13,7 +20,6 @@ class LieDetectorApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(),
       home: const StartPage(),
     );
   }
@@ -28,79 +34,89 @@ class StartPage extends StatefulWidget {
 }
 
 class _StartPageState extends State<StartPage> {
-  @override
-  void initState() {
-    super.initState();
-    // Init Tapsell SDK
-    TapsellPlus.instance.initialize(
-        "nidhnjdiqidktemidibsjiebfocrhbgktjmccsqktscmittkobkbooqnjlrnnhhtheccgn");
-  }
+  String? responseId;
 
-  void _showRewardedAd() async {
-    String zoneId = "68a21c01e6b8427db138ac01";
+  void _loadAdAndStart() async {
+    // درخواست تبلیغ جایزه‌دار
+    responseId = await TapsellPlus.instance.requestRewardedVideoAd(
+      "68a21c01e6b8427db138ac01", // Zone ID جایزه‌دار
+    );
 
-    // لود تبلیغ جایزه‌دار
-    TapsellPlus.instance.loadRewardedAd(zoneId).then((ad) {
-      // نمایش تبلیغ
-      ad.show(
-        onOpened: () => debugPrint("Ad opened"),
-        onClosed: (bool completed) {
-          if (completed) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const CheckPage()),
-            );
-          }
+    if (responseId != null) {
+      TapsellPlus.instance.showRewardedVideoAd(
+        responseId!,
+        onOpened: (map) => print("Ad opened"),
+        onClosed: (map) {
+          print("Ad closed: $map");
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const CheckPage()),
+          );
         },
-        onError: (message) => debugPrint("Error: $message"),
+        onError: (map) {
+          print("Ad error: $map");
+          // اگه تبلیغ نیومد مستقیم بره
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const CheckPage()),
+          );
+        },
       );
-    }).catchError((e) {
-      debugPrint("RewardedAd error: $e");
-    });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Center(
-            child: GestureDetector(
-              onTap: _showRewardedAd,
-              child: Container(
-                width: 150,
-                height: 150,
-                decoration: const BoxDecoration(
-                  color: Colors.red,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.redAccent,
-                      blurRadius: 20,
-                      spreadRadius: 2,
-                    ),
-                  ],
+      body: Center(
+        child: GestureDetector(
+          onTap: _loadAdAndStart,
+          child: Container(
+            width: 160,
+            height: 160,
+            decoration: const BoxDecoration(
+              color: Colors.red,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.redAccent,
+                  blurRadius: 20,
+                  spreadRadius: 3,
                 ),
-                child: const Center(
-                  child: Text(
-                    "شروع",
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
+              ],
+            ),
+            child: const Center(
+              child: Text(
+                "شروع",
+                style: TextStyle(
+                  fontSize: 34,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
                 ),
               ),
             ),
           ),
-          const Spacer(),
-          TapsellPlusBanner(
-            zoneId: "68a21cc3e6b8427db138ac02",
-            bannerType: TapsellPlusBannerType.BANNER_320x50,
+        ),
+      ),
+
+      // --- تبلیغ بنری پایین صفحه ---
+      bottomNavigationBar: SizedBox(
+        height: 60,
+        child: FutureBuilder<Widget>(
+          future: TapsellPlus.instance.showStandardBannerAd(
+            "68a21cc3e6b8427db138ac02", // Zone ID بنری
+            TapsellPlusBannerType.BANNER_320x50,
+            TapsellPlusHorizontalGravity.BOTTOM,
+            TapsellPlusVerticalGravity.CENTER,
           ),
-        ],
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData) {
+              return snapshot.data!;
+            }
+            return const SizedBox(); // تا وقتی نیومده چیزی نشون نده
+          },
+        ),
       ),
     );
   }
@@ -140,6 +156,13 @@ class CheckPage extends StatelessWidget {
               decoration: BoxDecoration(
                 color: Colors.red,
                 borderRadius: BorderRadius.circular(12),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.redAccent,
+                    blurRadius: 10,
+                    spreadRadius: 2,
+                  ),
+                ],
               ),
               child: const Text(
                 "بررسی",
@@ -151,12 +174,27 @@ class CheckPage extends StatelessWidget {
               ),
             ),
           ),
-          const Spacer(),
-          TapsellPlusBanner(
-            zoneId: "68a21cc3e6b8427db138ac02",
-            bannerType: TapsellPlusBannerType.BANNER_320x50,
-          ),
         ],
+      ),
+
+      // تبلیغ بنری پایین
+      bottomNavigationBar: SizedBox(
+        height: 60,
+        child: FutureBuilder<Widget>(
+          future: TapsellPlus.instance.showStandardBannerAd(
+            "68a21cc3e6b8427db138ac02",
+            TapsellPlusBannerType.BANNER_320x50,
+            TapsellPlusHorizontalGravity.BOTTOM,
+            TapsellPlusVerticalGravity.CENTER,
+          ),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData) {
+              return snapshot.data!;
+            }
+            return const SizedBox();
+          },
+        ),
       ),
     );
   }
@@ -170,29 +208,43 @@ class ResultPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: isTrue ? Colors.lime : Colors.red,
-        child: Center(
-          child: Text(
-            isTrue ? "راست" : "دروغ بزرگ",
-            style: const TextStyle(
-              fontSize: 50,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              shadows: [
-                Shadow(
-                  offset: Offset(2, 2),
-                  blurRadius: 6,
-                  color: Colors.black38,
-                )
-              ],
-            ),
+      backgroundColor: isTrue ? Colors.green : Colors.red,
+      body: Center(
+        child: Text(
+          isTrue ? "راست" : "دروغ بزرگ",
+          style: const TextStyle(
+            fontSize: 50,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+            shadows: [
+              Shadow(
+                offset: Offset(2, 2),
+                blurRadius: 6,
+                color: Colors.black38,
+              )
+            ],
           ),
         ),
       ),
-      bottomNavigationBar: TapsellPlusBanner(
-        zoneId: "68a21cc3e6b8427db138ac02",
-        bannerType: TapsellPlusBannerType.BANNER_320x50,
+
+      // تبلیغ بنری پایین
+      bottomNavigationBar: SizedBox(
+        height: 60,
+        child: FutureBuilder<Widget>(
+          future: TapsellPlus.instance.showStandardBannerAd(
+            "68a21cc3e6b8427db138ac02",
+            TapsellPlusBannerType.BANNER_320x50,
+            TapsellPlusHorizontalGravity.BOTTOM,
+            TapsellPlusVerticalGravity.CENTER,
+          ),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done &&
+                snapshot.hasData) {
+              return snapshot.data!;
+            }
+            return const SizedBox();
+          },
+        ),
       ),
     );
   }
