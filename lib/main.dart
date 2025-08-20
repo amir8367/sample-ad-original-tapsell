@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:tapsell_plus/tapsell_plus.dart';
-import 'package:tapsell_plus/models/tapsell_plus_banner.dart';
 
 void main() {
   runApp(const LieDetectorApp());
@@ -14,7 +13,7 @@ class LieDetectorApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(fontFamily: 'Vazir'),
+      theme: ThemeData(),
       home: const StartPage(),
     );
   }
@@ -40,23 +39,37 @@ class _StartPageState extends State<StartPage> {
   void _showRewardedAd() async {
     String zoneId = "68a21c01e6b8427db138ac01";
 
-    String responseId = await TapsellPlus.instance.requestRewardedAd(zoneId);
-    TapsellPlus.instance.showAd(responseId, onOpened: () {
-      debugPrint("Ad opened");
-    }, onClosed: (bool completed) {
-      if (completed) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const CheckPage()),
-        );
-      }
-    }, onError: (message) {
-      debugPrint("Error: $message");
+    TapsellPlus.instance
+        .requestAd(zoneId, TapsellPlusAdRequestOptions())
+        .then((responseId) {
+      TapsellPlus.instance.showAd(responseId,
+          onOpened: () {
+            debugPrint("Ad opened");
+          },
+          onClosed: (bool completed) {
+            if (completed) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CheckPage()),
+              );
+            }
+          },
+          onError: (message) {
+            debugPrint("Error: $message");
+          });
+    }).catchError((e) {
+      debugPrint("RequestAd error: $e");
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    Widget banner = TapsellPlus.instance.showStandardBannerAd(
+      "68a21cc3e6b8427db138ac02",
+      TapsellPlusBannerType.BANNER_320x50,
+      onError: (message) => debugPrint("Banner error: $message"),
+    );
+
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -92,11 +105,7 @@ class _StartPageState extends State<StartPage> {
             ),
           ),
           const Spacer(),
-          // تبلیغ بنری
-          TapsellPlusBannerWidget(
-            zoneId: "68a21cc3e6b8427db138ac02",
-            bannerType: TapsellPlusBannerType.BANNER_320x50,
-          ),
+          banner,
         ],
       ),
     );
@@ -118,6 +127,12 @@ class CheckPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget banner = TapsellPlus.instance.showStandardBannerAd(
+      "68a21cc3e6b8427db138ac02",
+      TapsellPlusBannerType.BANNER_320x50,
+      onError: (message) => debugPrint("Banner error: $message"),
+    );
+
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -151,10 +166,7 @@ class CheckPage extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          TapsellPlusBannerWidget(
-            zoneId: "68a21cc3e6b8427db138ac02",
-            bannerType: TapsellPlusBannerType.BANNER_320x50,
-          ),
+          banner,
         ],
       ),
     );
@@ -168,6 +180,12 @@ class ResultPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget banner = TapsellPlus.instance.showStandardBannerAd(
+      "68a21cc3e6b8427db138ac02",
+      TapsellPlusBannerType.BANNER_320x50,
+      onError: (message) => debugPrint("Banner error: $message"),
+    );
+
     return Scaffold(
       body: Container(
         color: isTrue ? Colors.lime : Colors.red,
@@ -189,12 +207,8 @@ class ResultPage extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: TapsellPlusBannerWidget(
-        zoneId: "68a21cc3e6b8427db138ac02",
-        bannerType: TapsellPlusBannerType.BANNER_320x50,
-      ),
+      bottomNavigationBar: banner,
     );
   }
 }
-
 
