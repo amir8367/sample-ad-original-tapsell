@@ -7,7 +7,7 @@ void main() {
 }
 
 class LieDetectorApp extends StatelessWidget {
-  const LieDetectorApp({super.key});
+  const LieDetectorApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class LieDetectorApp extends StatelessWidget {
 
 // ---------------- صفحه شروع ----------------
 class StartPage extends StatefulWidget {
-  const StartPage({super.key});
+  const StartPage({Key? key}) : super(key: key);
 
   @override
   State<StartPage> createState() => _StartPageState();
@@ -65,6 +65,7 @@ class _StartPageState extends State<StartPage> {
   @override
   Widget build(BuildContext context) {
     Widget banner = TapsellPlus.instance.showStandardBannerAd(
+      context,
       "68a21cc3e6b8427db138ac02",
       TapsellPlusBannerType.BANNER_320x50,
       onError: (message) => debugPrint("Banner error: $message"),
@@ -114,20 +115,20 @@ class _StartPageState extends State<StartPage> {
 
 // ---------------- صفحه بررسی ----------------
 class CheckPage extends StatelessWidget {
-  const CheckPage({super.key});
+  const CheckPage({Key? key}) : super(key: key);
 
   void _goToResult(BuildContext context) {
     bool isTrue = Random().nextBool();
     Navigator.push(
       context,
-      MaterialPageRoute(
-          builder: (context) => ResultPage(isTrue: isTrue)),
+      MaterialPageRoute(builder: (context) => ResultPage(isTrue: isTrue)),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     Widget banner = TapsellPlus.instance.showStandardBannerAd(
+      context,
       "68a21cc3e6b8427db138ac02",
       TapsellPlusBannerType.BANNER_320x50,
       onError: (message) => debugPrint("Banner error: $message"),
@@ -149,8 +150,7 @@ class CheckPage extends StatelessWidget {
           GestureDetector(
             onTap: () => _goToResult(context),
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+              padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
               decoration: BoxDecoration(
                 color: Colors.red,
                 borderRadius: BorderRadius.circular(12),
@@ -176,11 +176,12 @@ class CheckPage extends StatelessWidget {
 // ---------------- صفحه نتیجه ----------------
 class ResultPage extends StatelessWidget {
   final bool isTrue;
-  const ResultPage({super.key, required this.isTrue});
+  const ResultPage({Key? key, required this.isTrue}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     Widget banner = TapsellPlus.instance.showStandardBannerAd(
+      context,
       "68a21cc3e6b8427db138ac02",
       TapsellPlusBannerType.BANNER_320x50,
       onError: (message) => debugPrint("Banner error: $message"),
@@ -211,4 +212,3 @@ class ResultPage extends StatelessWidget {
     );
   }
 }
-
