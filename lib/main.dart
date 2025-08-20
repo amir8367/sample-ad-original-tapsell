@@ -98,26 +98,6 @@ class _StartPageState extends State<StartPage> {
           ),
         ),
       ),
-
-      // --- تبلیغ بنری پایین صفحه ---
-      bottomNavigationBar: SizedBox(
-        height: 60,
-        child: FutureBuilder<Widget>(
-          future: TapsellPlus.instance.showStandardBannerAd(
-            "68a21cc3e6b8427db138ac02", // Zone ID بنری
-            TapsellPlusBannerType.BANNER_320x50,
-            TapsellPlusHorizontalGravity.BOTTOM,
-            TapsellPlusVerticalGravity.CENTER,
-          ),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasData) {
-              return snapshot.data!;
-            }
-            return const SizedBox(); // تا وقتی نیومده چیزی نشون نده
-          },
-        ),
-      ),
     );
   }
 }
@@ -176,26 +156,6 @@ class CheckPage extends StatelessWidget {
           ),
         ],
       ),
-
-      // تبلیغ بنری پایین
-      bottomNavigationBar: SizedBox(
-        height: 60,
-        child: FutureBuilder<Widget>(
-          future: TapsellPlus.instance.showStandardBannerAd(
-            "68a21cc3e6b8427db138ac02",
-            TapsellPlusBannerType.BANNER_320x50,
-            TapsellPlusHorizontalGravity.BOTTOM,
-            TapsellPlusVerticalGravity.CENTER,
-          ),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasData) {
-              return snapshot.data!;
-            }
-            return const SizedBox();
-          },
-        ),
-      ),
     );
   }
 }
@@ -224,26 +184,6 @@ class ResultPage extends StatelessWidget {
               )
             ],
           ),
-        ),
-      ),
-
-      // تبلیغ بنری پایین
-      bottomNavigationBar: SizedBox(
-        height: 60,
-        child: FutureBuilder<Widget>(
-          future: TapsellPlus.instance.showStandardBannerAd(
-            "68a21cc3e6b8427db138ac02",
-            TapsellPlusBannerType.BANNER_320x50,
-            TapsellPlusHorizontalGravity.BOTTOM,
-            TapsellPlusVerticalGravity.CENTER,
-          ),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasData) {
-              return snapshot.data!;
-            }
-            return const SizedBox();
-          },
         ),
       ),
     );
