@@ -39,26 +39,23 @@ class _StartPageState extends State<StartPage> {
   void _showRewardedAd() async {
     String zoneId = "68a21c01e6b8427db138ac01";
 
-    TapsellPlus.instance
-        .requestAd(zoneId, TapsellPlusAdRequestOptions())
-        .then((responseId) {
-      TapsellPlus.instance.showAd(responseId,
-          onOpened: () {
-            debugPrint("Ad opened");
-          },
-          onClosed: (bool completed) {
-            if (completed) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const CheckPage()),
-              );
-            }
-          },
-          onError: (message) {
-            debugPrint("Error: $message");
-          });
+    // لود تبلیغ جایزه‌دار
+    TapsellPlus.instance.loadRewardedAd(zoneId).then((ad) {
+      // نمایش تبلیغ
+      ad.show(
+        onOpened: () => debugPrint("Ad opened"),
+        onClosed: (bool completed) {
+          if (completed) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const CheckPage()),
+            );
+          }
+        },
+        onError: (message) => debugPrint("Error: $message"),
+      );
     }).catchError((e) {
-      debugPrint("RequestAd error: $e");
+      debugPrint("RewardedAd error: $e");
     });
   }
 
@@ -99,7 +96,7 @@ class _StartPageState extends State<StartPage> {
             ),
           ),
           const Spacer(),
-          const TapsellPlusBanner(
+          TapsellPlusBanner(
             zoneId: "68a21cc3e6b8427db138ac02",
             bannerType: TapsellPlusBannerType.BANNER_320x50,
           ),
@@ -155,7 +152,7 @@ class CheckPage extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          const TapsellPlusBanner(
+          TapsellPlusBanner(
             zoneId: "68a21cc3e6b8427db138ac02",
             bannerType: TapsellPlusBannerType.BANNER_320x50,
           ),
@@ -193,7 +190,7 @@ class ResultPage extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: const TapsellPlusBanner(
+      bottomNavigationBar: TapsellPlusBanner(
         zoneId: "68a21cc3e6b8427db138ac02",
         bannerType: TapsellPlusBannerType.BANNER_320x50,
       ),
